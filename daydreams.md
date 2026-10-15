@@ -39,9 +39,6 @@
 
 ---
 
-> MONDO GROSSO IN THIS WORLD feat. 坂本龍一
-<iframe src="https://player.bilibili.com/player.html?bvid=BV1jT4y117yr&page=1&high_quality=1&danmaku=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
-
 ## 2026.09.07
 
 情绪是一种生物适应&动力机制，当你开始思考情绪的本质时，一定程度上你已经开始跳出本能的框架，
