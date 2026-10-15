@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>我的知识库</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link id="theme-link" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <style>
+    .app-name { display: none; }
+    #theme-toggle {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 999;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1.4;
+      background: var(--theme-color, #42b983);
+      color: #fff;
+    }
+    .markdown-section > p > img {
+      display: block;
+      width: min(440px, 100%);
+      height: auto;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="content.js"></script>
+  <script>
+    (function () {
+      var docs = window.__DOCS || {};
+      function lookup(url) {
+        var s = String(url || "");
+        var cut = s.search(/[?#]/);
+        if (cut >= 0) s = s.slice(0, cut);
+        try { s = decodeURIComponent(s); } catch (e) {}
+        s = s.replace(/\\/g, "/");
+        var best = "";
+        for (var k in docs) {
+          if (!Object.prototype.hasOwnProperty.call(docs, k)) continue;
+          if (s === k || s.slice(-(k.length + 1)) === "/" + k) {
+            if (k.length > best.length) best = k;
+          }
+        }
+        return best ? docs[best] : null;
+      }
+      function applyFake(xhr, text) {
+        try {
+          Object.defineProperty(xhr, "status", { configurable: true, get: function () { return 200; } });
+          Object.defineProperty(xhr, "response", { configurable: true, get: function () { return text; } });
+          Object.defineProperty(xhr, "responseText", { configurable: true, get: function () { return text; } });
+          Object.defineProperty(xhr, "readyState", { configurable: true, get: function () { return 4; } });
+        } catch (e) {}
+        xhr.getResponseHeader = function () { return null; };
+      }
+      var origOpen = XMLHttpRequest.prototype.open;
+      var origSend = XMLHttpRequest.prototype.send;
+      var origAdd = XMLHttpRequest.prototype.addEventListener;
+      XMLHttpRequest.prototype.open = function (method, url) {
+        this.__docUrl = url;
+        return origOpen.apply(this, arguments);
+      };
+      XMLHttpRequest.prototype.addEventListener = function (type, fn, opt) {
+        if (location.protocol === "file:" && (type === "load" || type === "error") && lookup(this.__docUrl) != null) {
+          var xhr = this;
+          var wrapped = function () {
+            var body = lookup(xhr.__docUrl);
+            if (body != null && (type === "error" || xhr.status >= 400 || xhr.status === 0)) {
+              applyFake(xhr, body);
+              if (type === "error") {
+                xhr.dispatchEvent(new Event("load"));
+                return;
+              }
+            }
+            return fn.apply(xhr, arguments);
+          };
+          return origAdd.call(this, type, wrapped, opt);
+        }
+        return origAdd.apply(this, arguments);
+      };
+      XMLHttpRequest.prototype.send = function (body) {
+        var xhr = this;
+        var text = lookup(xhr.__docUrl);
+        if (location.protocol === "file:" && text != null) {
+          setTimeout(function () {
+            applyFake(xhr, text);
+            xhr.dispatchEvent(new Event("load"));
+            xhr.dispatchEvent(new Event("loadend"));
+          }, 0);
+          return;
+        }
+        return origSend.apply(this, arguments);
+      };
+    })();
+    var path = window.location.pathname || "/";
+    if (/index\.html$/i.test(path)) path = path.replace(/index\.html$/i, "");
+    if (path.slice(-1) !== "/") path += "/";
+    window.$docsify = {
+      name: "我的知识库",
+      basePath: path,
+      homepage: "README.md",
+      loadSidebar: "_sidebar.md",
+      subMaxLevel: 0,
+      auto2top: true,
+      relativePath: false,
+      routerMode: "hash",
+      search: {
+        placeholder: "搜索",
+        noData: "没有结果",
+        depth: 4
+      },
+      plugins: [
+        function (hook) {
+          var themes = {
+            light: "https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css",
+            dark: "https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css"
+          };
+          function applyTheme(mode) {
+            document.getElementById("theme-link").href = themes[mode];
+            var btn = document.getElementById("theme-toggle");
+            if (btn) btn.textContent = mode === "dark" ? "☀️ 白天" : "🌙 夜间";
+            localStorage.setItem("docsify-theme", mode);
+          }
+          hook.ready(function () {
+            var saved = localStorage.getItem("docsify-theme") || "light";
+            if (saved === "dark") applyTheme("dark");
+            var btn = document.createElement("button");
+            btn.id = "theme-toggle";
+            btn.type = "button";
+            btn.textContent = saved === "dark" ? "☀️ 白天" : "🌙 夜间";
+            btn.onclick = function () {
+              var dark = document.getElementById("theme-link").href.indexOf("dark.css") !== -1;
+              applyTheme(dark ? "light" : "dark");
+            };
+            document.body.appendChild(btn);
+          });
+        }
+      ]
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+</body>
+</html>
