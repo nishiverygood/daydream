@@ -2,11 +2,12 @@
 
 ## 2026.11.3
 #### Christopher Kerr on death（一个研究死亡的学者）
+
 Dying is a process; Death is a moment.
 Dream in dying:常常会梦见对自己重要的人，体验如此真实，他们不认为这是梦。
 临终者的特征：
- 他们变得无私。
- 希望在家里离世。
+他们变得无私。
+希望在家里离世。
 
 
 ## 2026.10.20
