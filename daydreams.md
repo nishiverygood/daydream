@@ -3,7 +3,7 @@
 ## 2026.11.3
 #### Christopher Kerr on death（一个研究死亡的学者）
 
-Dying is a process; Death is a moment.
+Dying is a process of repeat cycle; Death is a moment.
 Dream in dying:常常会梦见对自己重要的人，体验如此真实，他们不认为这是梦。
 - 临终者的特征：
 1. 他们变得无私。
